@@ -19,7 +19,7 @@ node('maven') {
               ).trim()
        echo "SONARQUBE_URL: ${SONARQUBE_URL}"
 
-       sh './gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace'
+       sh './gradlew sonarqube -Dsonar.host.url="${SONARQUBE_URL}" -Dsonar.verbose=true --stacktrace'
 
        }
    }
