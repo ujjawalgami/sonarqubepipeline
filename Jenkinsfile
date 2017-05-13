@@ -14,7 +14,7 @@ node('maven') {
        echo "SONARQUBE_PWD: ${SONARQUBE_PWD}"
 
        SONARQUBE_URL = sh (
-           script: 'oc get routes -o wide --no-headers | grep sonarqube | awk \'{ print (NF==4) ?  "http://"$2 : "https://"$2 }\'',
+           script: 'oc get routes -o wide --no-headers | grep sonarqube | awk \'{ print (NF==5) ?  "http://"$2 : "https://"$2 }\'',
            returnStdout: true
               ).trim()
        echo "SONARQUBE_URL: ${SONARQUBE_URL}"
