@@ -1,16 +1,26 @@
 node('maven') {
    stage('checkout tfrs-sample-sonar')
    git url: 'https://github.com/bcgov/tfrs-sonar-scanner.git'
-   
-   stage('list root dir')
-   sh 'ls -l -srt'
 
    stage('change to working dir')
    dir('tfrs-sample-project'){
-       stage('list dir')
-       sh 'ls -l -srt'
-   
-       stage('execute sonar')
-       sh './gradlew sonarqube -Dsonar.host.url=http://sonarqube-mem-tfrs-tools.pathfinder.gov.bc.ca -Dsonar.verbose=true --stacktrace'
+
+       stage('execute sonar') {
+
+       SONARQUBE_PWD = sh (
+         script: 'oc env dc/sonarqube --list | awk  -F  "=" \'/SONARQUBE_ADMINPW/{print $2}\'',
+         returnStdout: true
+          ).trim()
+       echo "SONARQUBE_PWD: ${SONARQUBE_PWD}"
+
+       SONARQUBE_URL = sh (
+           script: 'oc get routes -o wide --no-headers | grep sonarqube | awk \'{ print (NF==4) ?  "http://"$2 : "https://"$2 }\'',
+           returnStdout: true
+              ).trim()
+       echo "SONARQUBE_URL: ${SONARQUBE_URL}"
+
+       sh './gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace'
+
+       }
    }
 }
